@@ -344,7 +344,7 @@ namespace DataAccessFramework
 			string parameterName, Guid? value);
 
 		/// <summary>
-		/// Creates database parameter for an integer value.
+		/// Creates database parameter for an 32 bit integer value.
 		/// </summary>
 		/// <param name="parameterName">
 		/// The name of the parameter.
@@ -361,6 +361,22 @@ namespace DataAccessFramework
 		{
 			return CreateIntParameter(parameterName, (int?)value);
 		}
+
+		/// <summary>
+		/// Creates database parameter for an 64 bit integer value.
+		/// </summary>
+		/// <param name="parameterName">
+		/// The name of the parameter.
+		/// </param>
+		/// <param name="value">
+		/// The value of the parameter
+		/// </param>
+		/// <returns>
+		/// An <see cref="IDataParameter"/> instance that can be passed
+		/// to any of the execute functions
+		/// </returns>
+		public abstract IDataParameter CreateLongParameter(
+			string parameterName, long value);
 
 		/// <summary>
 		/// Creates a database parameter for a stamp value.
@@ -435,7 +451,7 @@ namespace DataAccessFramework
 		/// An <see cref="IDataParameter"/> instance that can be passed
 		/// to any of the execute functions
 		/// </returns>
-		public abstract IDataParameter CreateDateParameter(
+		public abstract IDataParameter CreateDateTimeParameter(
 			string parameterName, DateTime? value);
 
 		/// <summary>
@@ -447,10 +463,10 @@ namespace DataAccessFramework
 		/// An <see cref="IDataParameter"/> instance that can be passed
 		/// to any of the execute functions
 		/// </returns>
-		public virtual IDataParameter CreateDateParameter(
+		public virtual IDataParameter CreateDateTimeParameter(
 			string parameterName, DateTime value)
 		{
-			return CreateDateParameter(parameterName, (DateTime?)value);
+			return CreateDateTimeParameter(parameterName, (DateTime?)value);
 		}
 
 		/// <summary>

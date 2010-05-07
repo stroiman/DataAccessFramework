@@ -92,6 +92,14 @@ namespace DataAccessFramework
 			return parameter;
 		}
 
+		public override IDataParameter CreateLongParameter(string parameterName, long value)
+		{
+			return new SqlParameter(parameterName, SqlDbType.BigInt) 
+			{
+				Value = value
+			};
+		}
+
 		/// <summary>
 		/// Implements <see cref="DataTool.CreateBoolParameter(string,bool)" />.
 		/// Creates a database parameter for a Boolean value.
@@ -179,7 +187,7 @@ namespace DataAccessFramework
 		/// An <see cref="IDataParameter"/> instance that can be passed
 		/// to any of the execute functions
 		/// </returns>
-		public override IDataParameter CreateDateParameter(string parameterName, DateTime? value)
+		public override IDataParameter CreateDateTimeParameter(string parameterName, DateTime? value)
 		{
 			var parameter = new SqlParameter(parameterName, SqlDbType.DateTime2);
 			if (value.HasValue)
