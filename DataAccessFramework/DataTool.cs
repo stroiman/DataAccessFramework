@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Data;
 
@@ -437,6 +438,19 @@ namespace DataAccessFramework
 		/// </exception>
 		public abstract IDataParameter CreateBinaryParameter(
 			string parameterName, byte[] value, int? length);
+
+		public virtual IDataParameter CreateBinaryParameter(
+			string parameterName, Stream dataStream)
+		{
+			using (var memoryStream = new MemoryStream())
+			{
+				var buffer = new byte[1024];
+				int bytesRead;
+				while (0 < (bytesRead = dataStream.Read(buffer, 0, 1024)))
+					memoryStream.Write(buffer, 0, bytesRead);
+				return CreateBinaryParameter(parameterName, memoryStream.ToArray(), null);
+			}
+		}
 
 		/// <summary>
 		/// Creates a database parameter for a datetime value
