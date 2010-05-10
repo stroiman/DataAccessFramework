@@ -399,9 +399,6 @@ namespace DataAccessFramework
 		/// <summary>
 		/// Builds the SQL for the integer constants. Creates a parameter
 		/// </summary>
-		/// <param name="builder"></param>
-		/// <param name="tool"></param>
-		/// <param name="parameters"></param>
 		public override void BuildSql(StringBuilder builder, DataTool tool, IList<IDataParameter> parameters)
 		{
 			int parameterNo = parameters.Count + 1;
@@ -416,6 +413,35 @@ namespace DataAccessFramework
 		/// unit testing so data query generation logic can be validated
 		/// </summary>
 		public int Value { get { return _value; } }
+	}
+
+	/// <summary>
+	/// Where part containing an 64bit integer constant.
+	/// </summary>
+	public class LongConstant : WherePart
+	{
+		private readonly long _value;
+
+		/// <summary>
+		/// Creates a new <see cref="LongConstant"/> instance
+		/// </summary>
+		/// <param name="value"></param>
+		public LongConstant(long value)
+		{
+			_value = value;
+		}
+
+		/// <summary>
+		/// Builds the SQL for the 64bit integer constants. Creates a parameter
+		/// </summary>
+		public override void BuildSql(StringBuilder builder, DataTool tool, IList<IDataParameter> parameters)
+		{
+			int parameterNo = parameters.Count + 1;
+			string parameterName = "p" + parameterNo;
+			parameters.Add(tool.CreateLongParameter(parameterName, _value));
+			builder.Append("@");
+			builder.Append(parameterName);
+		}
 	}
 
 	/// <summary>
