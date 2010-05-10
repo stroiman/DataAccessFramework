@@ -13,10 +13,11 @@ namespace DataAccessFramework
 	///</summary>
 	public class DataQuery
 	{
-		private readonly List<QueryTable> _tables = new List<QueryTable>();
+		private readonly List<TableBase> _tables = new List<TableBase>();
 		private readonly AndClause _whereClause = new AndClause();
 		private readonly List<SortExpression> _sortExpressions =
 			new List<SortExpression>();
+		private int _tableNo = 1;
 
 		/// <summary>
 		/// Adds a table to the query.
@@ -24,7 +25,17 @@ namespace DataAccessFramework
 		public void AddTable(QueryTable table)
 		{
 			_tables.Add(table);
-			table.SetAlias("t" + _tables.Count);
+			table.SetAlias("t" + _tableNo++);
+		}
+
+		/// <summary>
+		/// Adds a table to the query.
+		/// </summary>
+		public void AddTable(Join join)
+		{
+			_tables.Add(join);
+			join.Left.SetAlias("t" + _tableNo++);
+			join.Right.SetAlias("t" + _tableNo++);
 		}
 
 		/// <summary>
@@ -38,7 +49,7 @@ namespace DataAccessFramework
 		/// <summary>
 		/// Gets all the tables in the data query.
 		/// </summary>
-		public ReadOnlyCollection<QueryTable> Tables
+		public ReadOnlyCollection<TableBase> Tables
 		{
 			get { return _tables.AsReadOnly(); }
 		}
@@ -64,11 +75,11 @@ namespace DataAccessFramework
 			var builder = new StringBuilder();
 			builder.Append("select * from ");
 			var secondTable = false;
-			foreach (QueryTable table in _tables)
+			foreach (var table in _tables)
 			{
 				if (secondTable)
 					builder.Append(", ");
-				table.BuildSql(builder);
+				table.BuildSql(builder, dataTool, parameters);
 				secondTable = true;
 			}
 			if (_whereClause.Active)
@@ -110,7 +121,7 @@ namespace DataAccessFramework
 		/// </summary>
 		/// <param name="tableName"></param>
 		/// <returns></returns>
-		public QueryTable FindTable(string tableName)
+		public TableBase FindTable(string tableName)
 		{
 			return _tables.Find(x => x.Name == tableName);
 		}
@@ -121,10 +132,16 @@ namespace DataAccessFramework
 		public AndClause WhereClause { get { return _whereClause; } }
 	}
 
+	public abstract class TableBase
+	{
+		public abstract string Name { get; }
+		abstract internal void BuildSql(StringBuilder builder, DataTool dataTool, IList<IDataParameter> parameters);
+	}
+
 	/// <summary>
 	/// Represents a table used in a query.
 	/// </summary>
-	public class QueryTable
+	public class QueryTable : TableBase
 	{
 		private readonly string _tableName;
 		private string _alias;
@@ -141,7 +158,7 @@ namespace DataAccessFramework
 		/// <summary>
 		/// Gets the table name
 		/// </summary>
-		public string Name { get { return _tableName; } }
+		public override string Name { get { return _tableName; } }
 
 		/// <summary>
 		/// Gets the alias used for the table in the query.
@@ -156,7 +173,7 @@ namespace DataAccessFramework
 			_alias = alias;
 		}
 
-		internal void BuildSql(StringBuilder builder)
+		internal override void BuildSql(StringBuilder builder, DataTool dataTool, IList<IDataParameter> parameters)
 		{
 			builder.Append("[");
 			builder.Append(_tableName);
@@ -172,9 +189,59 @@ namespace DataAccessFramework
 		{
 			return _tableName + " " + _alias;
 		}
+
+		public Join LeftJoin(QueryTable table)
+		{
+			return new Join(this, table);
+		}
 	}
 
-	/// <summary>
+	public class Join : TableBase
+	{
+		private readonly QueryTable _left;
+		private readonly QueryTable _right;
+		private WherePart _wherePart;
+
+		public Join(QueryTable left, QueryTable right)
+		{
+			_left = left;
+			_right = right;
+		}
+
+		public QueryTable Right
+		{
+			get { return _right; }
+		}
+
+		public QueryTable Left
+		{
+			get { return _left; }
+		}
+
+		public Join On(WherePart clause)
+		{
+			_wherePart = clause;
+			return this;
+		}
+
+		public override string Name
+		{
+			get { return "JOIN"; }
+		}
+
+		internal override void BuildSql(StringBuilder builder, DataTool dataTool, IList<IDataParameter> parameters)
+		{
+			Left.BuildSql(builder, dataTool, parameters);
+			builder.Append(" left outer join ");
+			Right.BuildSql(builder, dataTool, parameters);
+			if (_wherePart == null)
+				return;
+			builder.Append(" on ");
+			_wherePart.BuildSql(builder, dataTool, parameters);
+		}
+	}
+
+		/// <summary>
 	/// Represents a part in where part of an sql query.
 	/// </summary>
 	public abstract class WherePart
@@ -394,6 +461,11 @@ namespace DataAccessFramework
 		public EqualsClause EqualTo(long value)
 		{
 			return new EqualsClause(this, new LongConstant(value));
+		}
+
+		public EqualsClause EqualTo(FieldReference field)
+		{
+			return new EqualsClause(this, field);
 		}
 	}
 
