@@ -1,36 +1,10 @@
-﻿using System.Data;
-using Moq;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 
 namespace DataAccessFramework.UnitTest
 {
 	[TestFixture]
-	public class DataQueryTest
+	public class DataQueryTest : DataQueryTestBase
 	{
-		private Mock<DataTool> _dataToolMock = new Mock<DataTool>();
-		private string _executedSql;
-		private IDataParameter[] _executedParameters;
-
-		[SetUp]
-		public void Setup()
-		{
-			_dataToolMock = new Mock<DataTool> { CallBase = true };
-			_dataToolMock.Setup(x => x.ExecuteSqlReader(It.IsAny<string>(), It.IsAny<IDataParameter[]>()))
-				.Callback((string sql, IDataParameter[] parameters) =>
-				{
-					_executedSql = sql;
-					_executedParameters = parameters;
-				});
-			_dataToolMock.Setup(x => x.CreateIntParameter(It.IsAny<string>(), It.IsAny<int?>()))
-				.Returns((string name, int? value) =>
-				{
-					var parameterMock = new Mock<IDataParameter>();
-					parameterMock.Setup(y => y.ParameterName).Returns(name);
-					parameterMock.Setup(y => y.Value).Returns(value);
-					return parameterMock.Object;
-				});
-		}
-
 		[Test]
 		public void Create_Query_With_One_Table()
 		{
@@ -40,10 +14,10 @@ namespace DataAccessFramework.UnitTest
 			dataQuery.AddTable(table);
 
 			// Execute
-			_dataToolMock.Object.ExecuteQuery(dataQuery);
+			Execute(dataQuery);
 
 			// Validate
-			Assert.AreEqual("select * from [table] t1", _executedSql);
+			Assert.AreEqual("select * from [table] t1", ExecutedSql);
 		}
 
 		[Test]
@@ -57,12 +31,12 @@ namespace DataAccessFramework.UnitTest
 			dataQuery.AddTable(table);
 
 			// Execute
-			_dataToolMock.Object.ExecuteQuery(dataQuery);
+			Execute(dataQuery);
 
 			// Validate
-			Assert.AreEqual("select * from [table] t1 where t1.[field]=@p1", _executedSql);
-			Assert.AreEqual(1, _executedParameters.Length);
-			Assert.AreEqual("p1", _executedParameters[0].ParameterName);
+			Assert.AreEqual("select * from [table] t1 where t1.[field]=@p1", ExecutedSql);
+			Assert.AreEqual(1, ExecutedParameters.Length);
+			Assert.AreEqual("p1", ExecutedParameters[0].ParameterName);
 		}
 
 		[Test]
@@ -80,13 +54,13 @@ namespace DataAccessFramework.UnitTest
 			dataQuery.AddTable(table);
 
 			// Execute
-			_dataToolMock.Object.ExecuteQuery(dataQuery);
+			Execute(dataQuery);
 
 			// Validate
-			Assert.AreEqual("select * from [table] t1 where (t1.[field]=@p1 AND t1.[field2]=@p2)", _executedSql);
-			Assert.AreEqual(2, _executedParameters.Length);
-			Assert.AreEqual("p1", _executedParameters[0].ParameterName);
-			Assert.AreEqual("p2", _executedParameters[1].ParameterName);
+			Assert.AreEqual("select * from [table] t1 where (t1.[field]=@p1 AND t1.[field2]=@p2)", ExecutedSql);
+			Assert.AreEqual(2, ExecutedParameters.Length);
+			Assert.AreEqual("p1", ExecutedParameters[0].ParameterName);
+			Assert.AreEqual("p2", ExecutedParameters[1].ParameterName);
 		}
 
 		[Test]
@@ -100,10 +74,10 @@ namespace DataAccessFramework.UnitTest
 			dataQuery.AddTable(t2);
 
 			// Execute
-			_dataToolMock.Object.ExecuteQuery(dataQuery);
+			Execute(dataQuery);
 
 			// Validate
-			Assert.AreEqual("select * from [table1] t1, [table2] t2", _executedSql);
+			Assert.AreEqual("select * from [table1] t1, [table2] t2", ExecutedSql);
 		}
 
 		[Test]
@@ -117,12 +91,12 @@ namespace DataAccessFramework.UnitTest
 			dataQuery.AddWhere(clause);
 
 			// Execute
-			_dataToolMock.Object.ExecuteQuery(dataQuery);
+			Execute(dataQuery);
 
 			// Validate
 			Assert.AreEqual(
 				"select * from [table1] t1 where contains(t1.[field],@p1)",
-				_executedSql);
+				ExecutedSql);
 		}
 
 		[Test]
@@ -136,12 +110,12 @@ namespace DataAccessFramework.UnitTest
 			dataQuery.AddWhere(clause);
 
 			// Execute
-			_dataToolMock.Object.ExecuteQuery(dataQuery);
+			Execute(dataQuery);
 
 			// Validate
 			Assert.AreEqual(
 				"select * from [table1] t1",
-				_executedSql);
+				ExecutedSql);
 		}
 	}
 }

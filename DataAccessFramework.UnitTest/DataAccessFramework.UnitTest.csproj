@@ -47,7 +47,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataQueryDSLTests.cs" />
     <Compile Include="DataQueryTest.cs" />
+    <Compile Include="DataQueryTestBase.cs" />
     <Compile Include="DataToolTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

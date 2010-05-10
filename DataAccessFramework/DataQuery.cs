@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
 using System.Data;
@@ -378,6 +379,22 @@ namespace DataAccessFramework
 		/// unit testing so data query generation logic can be validated
 		/// </summary>
 		public string FieldName { get { return _fieldName; } }
+
+		/// <summary>
+		/// Generates an <see cref="EqualsClause"/> for this field
+		/// </summary>
+		public EqualsClause EqualTo(int value)
+		{
+			return new EqualsClause(this, new IntConstant(value));
+		}
+
+		/// <summary>
+		/// Generates an <see cref="EqualsClause"/> for this field
+		/// </summary>
+		public EqualsClause EqualTo(long value)
+		{
+			return new EqualsClause(this, new LongConstant(value));
+		}
 	}
 
 	/// <summary>
