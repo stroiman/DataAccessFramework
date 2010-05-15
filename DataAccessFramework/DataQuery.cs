@@ -7,49 +7,7 @@ using System.Linq;
 
 namespace DataAccessFramework
 {
-	using ResolveAlias = Func<QueryTable, string>;
-
-	internal class BuildSqlContext
-	{
-		private readonly StringBuilder _builder;
-		private readonly DataTool _dataTool;
-		private readonly IList<IDataParameter> _parameters;
-		private readonly ResolveAlias _resolveAlias;
-
-		public BuildSqlContext(
-			StringBuilder builder,
-			DataTool dataTool,
-			IList<IDataParameter> parameters,
-			ResolveAlias resolveAlias)
-		{
-			_builder = builder;
-			_dataTool = dataTool;
-			_parameters = parameters;
-			_resolveAlias = resolveAlias;
-		}
-
-		public ResolveAlias ResolveAlias
-		{
-			get { return _resolveAlias; }
-		}
-
-		public IList<IDataParameter> Parameters
-		{
-			get { return _parameters; }
-		}
-
-		public DataTool DataTool
-		{
-			get { return _dataTool; }
-		}
-
-		public StringBuilder Builder
-		{
-			get { return _builder; }
-		}
-	}
-
-		///<summary>
+	///<summary>
 	/// An object that represents an SQL query, containing references
 	/// to the tables to join, and the where clauses.
 	///</summary>
