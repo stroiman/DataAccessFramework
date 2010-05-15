@@ -377,7 +377,7 @@ namespace DataAccessFramework
 		/// to any of the execute functions
 		/// </returns>
 		public abstract IDataParameter CreateLongParameter(
-			string parameterName, long value);
+			string parameterName, long? value);
 
 		/// <summary>
 		/// Creates a database parameter for a stamp value.

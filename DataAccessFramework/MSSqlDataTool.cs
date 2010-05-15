@@ -92,11 +92,11 @@ namespace DataAccessFramework
 			return parameter;
 		}
 
-		public override IDataParameter CreateLongParameter(string parameterName, long value)
+		public override IDataParameter CreateLongParameter(string parameterName, long? value)
 		{
 			return new SqlParameter(parameterName, SqlDbType.BigInt) 
 			{
-				Value = value
+				Value = value.HasValue ? (object)value.Value : DBNull.Value
 			};
 		}
 
