@@ -25,7 +25,7 @@ namespace DataAccessFramework
 		public void AddTable(QueryTable table)
 		{
 			_tables.Add(table);
-			table.SetAlias("t" + _tableNo++);
+			SetAlias(table);
 		}
 
 		/// <summary>
@@ -34,8 +34,20 @@ namespace DataAccessFramework
 		public void AddTable(Join join)
 		{
 			_tables.Add(join);
-			join.Left.SetAlias("t" + _tableNo++);
-			join.Right.SetAlias("t" + _tableNo++);
+			SetAlias(join);
+		}
+
+		public void SetAlias(TableBase tableBase)
+		{
+			var join = tableBase as Join;
+			if (join != null)
+			{
+				SetAlias(join.Left);
+				SetAlias(join.Right);
+				return;
+			}
+			var table = (QueryTable)tableBase;
+			table.SetAlias("t" + _tableNo++);
 		}
 
 		/// <summary>
@@ -136,6 +148,11 @@ namespace DataAccessFramework
 	{
 		public abstract string Name { get; }
 		abstract internal void BuildSql(StringBuilder builder, DataTool dataTool, IList<IDataParameter> parameters);
+
+		public Join LeftJoin(QueryTable table)
+		{
+			return new Join(this, table);
+		}
 	}
 
 	/// <summary>
@@ -190,19 +207,19 @@ namespace DataAccessFramework
 			return _tableName + " " + _alias;
 		}
 
-		public Join LeftJoin(QueryTable table)
+		public FieldReference Field(string name)
 		{
-			return new Join(this, table);
+			return new FieldReference(this, name);
 		}
 	}
 
 	public class Join : TableBase
 	{
-		private readonly QueryTable _left;
+		private readonly TableBase _left;
 		private readonly QueryTable _right;
 		private WherePart _wherePart;
 
-		public Join(QueryTable left, QueryTable right)
+		public Join(TableBase left, QueryTable right)
 		{
 			_left = left;
 			_right = right;
@@ -213,7 +230,7 @@ namespace DataAccessFramework
 			get { return _right; }
 		}
 
-		public QueryTable Left
+		public TableBase Left
 		{
 			get { return _left; }
 		}
