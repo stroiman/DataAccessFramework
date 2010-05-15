@@ -54,6 +54,14 @@ namespace DataAccessFramework.Querying
 		/// <summary>
 		/// Generates an <see cref="EqualsClause"/> for this field
 		/// </summary>
+		public EqualsClause EqualTo(string value)
+		{
+			return new EqualsClause(this, new StringConstant(value));
+		}
+
+		/// <summary>
+		/// Generates an <see cref="EqualsClause"/> for this field
+		/// </summary>
 		public EqualsClause EqualTo(long value)
 		{
 			return new EqualsClause(this, new LongConstant(value));
