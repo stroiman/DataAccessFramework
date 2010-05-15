@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Text;
 
-namespace DataAccessFramework
+namespace DataAccessFramework.Querying
 {
 	/// <summary>
 	/// Context for generating SQL. This contains all the data that is build up

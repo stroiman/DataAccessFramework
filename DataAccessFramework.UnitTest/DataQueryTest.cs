@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+using DataAccessFramework.Querying;
+using NUnit.Framework;
 
 namespace DataAccessFramework.UnitTest
 {

@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 using System.Data;
+using DataAccessFramework.Querying;
 
 // TODO: Handle SqlException error code -2146232060 (disconnected)
 

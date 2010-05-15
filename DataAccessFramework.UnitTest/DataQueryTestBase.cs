@@ -1,4 +1,5 @@
-﻿using System.Data;
+using System.Data;
+using DataAccessFramework.Querying;
 using Moq;
 using NUnit.Framework;
 
