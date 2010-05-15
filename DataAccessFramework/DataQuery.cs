@@ -7,7 +7,49 @@ using System.Linq;
 
 namespace DataAccessFramework
 {
-	///<summary>
+	using ResolveAlias = Func<QueryTable, string>;
+
+	internal class BuildSqlContext
+	{
+		private readonly StringBuilder _builder;
+		private readonly DataTool _dataTool;
+		private readonly IList<IDataParameter> _parameters;
+		private readonly ResolveAlias _resolveAlias;
+
+		public BuildSqlContext(
+			StringBuilder builder,
+			DataTool dataTool,
+			IList<IDataParameter> parameters,
+			ResolveAlias resolveAlias)
+		{
+			_builder = builder;
+			_dataTool = dataTool;
+			_parameters = parameters;
+			_resolveAlias = resolveAlias;
+		}
+
+		public ResolveAlias ResolveAlias
+		{
+			get { return _resolveAlias; }
+		}
+
+		public IList<IDataParameter> Parameters
+		{
+			get { return _parameters; }
+		}
+
+		public DataTool DataTool
+		{
+			get { return _dataTool; }
+		}
+
+		public StringBuilder Builder
+		{
+			get { return _builder; }
+		}
+	}
+
+		///<summary>
 	/// An object that represents an SQL query, containing references
 	/// to the tables to join, and the where clauses.
 	///</summary>
@@ -18,6 +60,7 @@ namespace DataAccessFramework
 		private readonly List<SortExpression> _sortExpressions =
 			new List<SortExpression>();
 		private int _tableNo = 1;
+		private Dictionary<QueryTable, string> _aliasMap = new Dictionary<QueryTable, string>();
 
 		/// <summary>
 		/// Adds a table to the query.
@@ -37,6 +80,11 @@ namespace DataAccessFramework
 			SetAlias(join);
 		}
 
+		private string GetAlias(QueryTable table)
+		{
+			return _aliasMap[table];
+		}
+
 		public void SetAlias(TableBase tableBase)
 		{
 			var join = tableBase as Join;
@@ -47,7 +95,7 @@ namespace DataAccessFramework
 				return;
 			}
 			var table = (QueryTable)tableBase;
-			table.SetAlias("t" + _tableNo++);
+			_aliasMap.Add(table, "t" + _tableNo++);
 		}
 
 		/// <summary>
@@ -87,17 +135,18 @@ namespace DataAccessFramework
 			var builder = new StringBuilder();
 			builder.Append("select * from ");
 			var secondTable = false;
+			var buildSqlContext = new BuildSqlContext(builder, dataTool, parameters, GetAlias);
 			foreach (var table in _tables)
 			{
 				if (secondTable)
 					builder.Append(", ");
-				table.BuildSql(builder, dataTool, parameters);
+				table.BuildSql(buildSqlContext);
 				secondTable = true;
 			}
 			if (_whereClause.Active)
 			{
 				builder.Append(" where ");
-				_whereClause.BuildSql(builder, dataTool, parameters);
+				_whereClause.BuildSql(buildSqlContext);
 			}
 			if (_sortExpressions.Count > 0)
 			{
@@ -108,7 +157,7 @@ namespace DataAccessFramework
 					if (!first)
 						builder.Append(", ");
 					first = false;
-					sortExpression.Field.BuildSql(builder, dataTool, parameters);
+					sortExpression.Field.BuildSql(buildSqlContext);
 				}
 			}
 			return new ParseResult(builder.ToString(), parameters);
@@ -147,7 +196,7 @@ namespace DataAccessFramework
 	public abstract class TableBase
 	{
 		public abstract string Name { get; }
-		abstract internal void BuildSql(StringBuilder builder, DataTool dataTool, IList<IDataParameter> parameters);
+		abstract internal void BuildSql(BuildSqlContext sqlContext);
 
 		public Join LeftJoin(QueryTable table)
 		{
@@ -161,7 +210,6 @@ namespace DataAccessFramework
 	public class QueryTable : TableBase
 	{
 		private readonly string _tableName;
-		private string _alias;
 
 		/// <summary>
 		/// Creates a new <c>QueryTable</c> instance.
@@ -177,36 +225,26 @@ namespace DataAccessFramework
 		/// </summary>
 		public override string Name { get { return _tableName; } }
 
-		/// <summary>
-		/// Gets the alias used for the table in the query.
-		/// </summary>
-		public string Alias
+		internal override void BuildSql(BuildSqlContext sqlContext)
 		{
-			get { return _alias; }
-		}
-
-		internal void SetAlias(string alias)
-		{
-			_alias = alias;
-		}
-
-		internal override void BuildSql(StringBuilder builder, DataTool dataTool, IList<IDataParameter> parameters)
-		{
-			builder.Append("[");
-			builder.Append(_tableName);
-			builder.Append("] ");
-			builder.Append(_alias);
+			sqlContext.Builder.Append("[");
+			sqlContext.Builder.Append(_tableName);
+			sqlContext.Builder.Append("] ");
+			sqlContext.Builder.Append(sqlContext.ResolveAlias(this));
 		}
 
 		/// <summary>
 		/// Creates a string representation of data table.
 		/// </summary>
-		/// <returns></returns>
 		public override string ToString()
 		{
-			return _tableName + " " + _alias;
+			return _tableName;
 		}
 
+		/// <summary>
+		/// Creatse a new <see cref="FieldReference"/> for a field on this table
+		/// </summary>
+		/// <param name="name">The name of the field</param>
 		public FieldReference Field(string name)
 		{
 			return new FieldReference(this, name);
@@ -246,15 +284,15 @@ namespace DataAccessFramework
 			get { return "JOIN"; }
 		}
 
-		internal override void BuildSql(StringBuilder builder, DataTool dataTool, IList<IDataParameter> parameters)
+		internal override void BuildSql(BuildSqlContext sqlContext)
 		{
-			Left.BuildSql(builder, dataTool, parameters);
-			builder.Append(" left outer join ");
-			Right.BuildSql(builder, dataTool, parameters);
+			Left.BuildSql(sqlContext);
+			sqlContext.Builder.Append(" left outer join ");
+			Right.BuildSql(sqlContext);
 			if (_wherePart == null)
 				return;
-			builder.Append(" on ");
-			_wherePart.BuildSql(builder, dataTool, parameters);
+			sqlContext.Builder.Append(" on ");
+			_wherePart.BuildSql(sqlContext);
 		}
 	}
 
@@ -274,16 +312,7 @@ namespace DataAccessFramework
 		/// <summary>
 		/// Builds the SQL for this part.
 		/// </summary>
-		/// <param name="builder">
-		/// Builder, where the SQL will be output to.
-		/// </param>
-		/// <param name="tool">
-		/// A data tool used for generating parameters
-		/// </param>
-		/// <param name="parameters">
-		/// The current list of parameters, where new parameters will be added
-		/// </param>
-		public abstract void BuildSql(StringBuilder builder, DataTool tool, IList<IDataParameter> parameters);
+		internal abstract void BuildSql(BuildSqlContext sqlContext);
 	}
 
 	/// <summary>
@@ -308,11 +337,11 @@ namespace DataAccessFramework
 		/// <summary>
 		/// Builds the sql for the clause.
 		/// </summary>
-		public override void BuildSql(StringBuilder builder, DataTool tool, IList<IDataParameter> parameters)
+		internal override void BuildSql(BuildSqlContext sqlContext)
 		{
-			_left.BuildSql(builder, tool, parameters);
-			builder.Append(" LIKE ");
-			_right.BuildSql(builder, tool, parameters);
+			_left.BuildSql(sqlContext);
+			sqlContext.Builder.Append(" LIKE ");
+			_right.BuildSql(sqlContext);
 		}
 	}
 
@@ -338,11 +367,11 @@ namespace DataAccessFramework
 		/// <summary>
 		/// Builds the SQL for this part.
 		/// </summary>
-		public override void BuildSql(StringBuilder builder, DataTool tool, IList<IDataParameter> parameters)
+		internal override void BuildSql(BuildSqlContext sqlContext)
 		{
-			_left.BuildSql(builder, tool, parameters);
-			builder.Append("=");
-			_right.BuildSql(builder, tool, parameters);
+			_left.BuildSql(sqlContext);
+			sqlContext.Builder.Append("=");
+			_right.BuildSql(sqlContext);
 		}
 
 		/// <summary>
@@ -402,19 +431,16 @@ namespace DataAccessFramework
 		/// <summary>
 		/// Builds the SQL for the full text.
 		/// </summary>
-		/// <param name="builder"></param>
-		/// <param name="tool"></param>
-		/// <param name="parameters"></param>
-		public override void BuildSql(StringBuilder builder, DataTool tool, IList<IDataParameter> parameters)
+		internal override void BuildSql(BuildSqlContext sqlContext)
 		{
-			builder.Append("contains(");
+			sqlContext.Builder.Append("contains(");
 			foreach (FieldReference reference in _fieldReferences)
 			{
-				reference.BuildSql(builder, tool, parameters);
-				builder.Append(",");
+				reference.BuildSql(sqlContext);
+				sqlContext.Builder.Append(",");
 			}
-			new StringConstant(_searchText).BuildSql(builder, tool, parameters);
-			builder.Append(")");
+			new StringConstant(_searchText).BuildSql(sqlContext);
+			sqlContext.Builder.Append(")");
 		}
 	}
 
@@ -441,15 +467,12 @@ namespace DataAccessFramework
 		/// <summary>
 		/// Builds the SQL for this field reference.
 		/// </summary>
-		/// <param name="builder"></param>
-		/// <param name="tool"></param>
-		/// <param name="parameters"></param>
-		public override void BuildSql(StringBuilder builder, DataTool tool, IList<IDataParameter> parameters)
+		internal override void BuildSql(BuildSqlContext context)
 		{
-			builder.Append(_table.Alias);
-			builder.Append(".[");
-			builder.Append(_fieldName);
-			builder.Append("]");
+			context.Builder.Append(context.ResolveAlias(_table));
+			context.Builder.Append(".[");
+			context.Builder.Append(_fieldName);
+			context.Builder.Append("]");
 		}
 
 		/// <summary>
@@ -505,13 +528,13 @@ namespace DataAccessFramework
 		/// <summary>
 		/// Builds the SQL for the integer constants. Creates a parameter
 		/// </summary>
-		public override void BuildSql(StringBuilder builder, DataTool tool, IList<IDataParameter> parameters)
+		internal override void BuildSql(BuildSqlContext sqlContext)
 		{
-			int parameterNo = parameters.Count + 1;
+			int parameterNo = sqlContext.Parameters.Count + 1;
 			string parameterName = "p" + parameterNo;
-			parameters.Add(tool.CreateIntParameter(parameterName, _value));
-			builder.Append("@");
-			builder.Append(parameterName);
+			sqlContext.Parameters.Add(sqlContext.DataTool.CreateIntParameter(parameterName, _value));
+			sqlContext.Builder.Append("@");
+			sqlContext.Builder.Append(parameterName);
 		}
 
 		/// <summary>
@@ -540,13 +563,13 @@ namespace DataAccessFramework
 		/// <summary>
 		/// Builds the SQL for the 64bit integer constants. Creates a parameter
 		/// </summary>
-		public override void BuildSql(StringBuilder builder, DataTool tool, IList<IDataParameter> parameters)
+		internal override void BuildSql(BuildSqlContext context)
 		{
-			int parameterNo = parameters.Count + 1;
+			int parameterNo = context.Parameters.Count + 1;
 			string parameterName = "p" + parameterNo;
-			parameters.Add(tool.CreateLongParameter(parameterName, _value));
-			builder.Append("@");
-			builder.Append(parameterName);
+			context.Parameters.Add(context.DataTool.CreateLongParameter(parameterName, _value));
+			context.Builder.Append("@");
+			context.Builder.Append(parameterName);
 		}
 	}
 
@@ -569,16 +592,13 @@ namespace DataAccessFramework
 		/// <summary>
 		/// Builds the SQL for the integer constants. Creates a parameter
 		/// </summary>
-		/// <param name="builder"></param>
-		/// <param name="tool"></param>
-		/// <param name="parameters"></param>
-		public override void BuildSql(StringBuilder builder, DataTool tool, IList<IDataParameter> parameters)
+		internal override void BuildSql(BuildSqlContext context)
 		{
-			int parameterNo = parameters.Count + 1;
+			int parameterNo = context.Parameters.Count + 1;
 			string parameterName = "p" + parameterNo;
-			parameters.Add(tool.CreateBoolParameter(parameterName, _value));
-			builder.Append("@");
-			builder.Append(parameterName);
+			context.Parameters.Add(context.DataTool.CreateBoolParameter(parameterName, _value));
+			context.Builder.Append("@");
+			context.Builder.Append(parameterName);
 		}
 	}
 
@@ -600,16 +620,13 @@ namespace DataAccessFramework
 		/// <summary>
 		/// Builds the SQL representing the string constant as a parameter.
 		/// </summary>
-		/// <param name="builder"></param>
-		/// <param name="tool"></param>
-		/// <param name="parameters"></param>
-		public override void BuildSql(StringBuilder builder, DataTool tool, IList<IDataParameter> parameters)
+		internal override void BuildSql(BuildSqlContext context)
 		{
-			int parameterNo = parameters.Count + 1;
+			int parameterNo = context.Parameters.Count + 1;
 			string parameterName = "p" + parameterNo;
-			parameters.Add(tool.CreateStringParameter(parameterName, _value, null));
-			builder.Append("@");
-			builder.Append(parameterName);
+			context.Parameters.Add(context.DataTool.CreateStringParameter(parameterName, _value, null));
+			context.Builder.Append("@");
+			context.Builder.Append(parameterName);
 		}
 	}
 
@@ -657,30 +674,30 @@ namespace DataAccessFramework
 		/// <summary>
 		/// Builds the SQL for the operator.
 		/// </summary>
-		public override void BuildSql(StringBuilder builder, DataTool tool, IList<IDataParameter> parameters)
+		internal override void BuildSql(BuildSqlContext context)
 		{
 			var activeParts = new List<WherePart>(ActiveParts);
 			if (activeParts.Count == 0)
 				return;
 			if (activeParts.Count == 1)
 			{
-				activeParts[0].BuildSql(builder, tool, parameters);
+				activeParts[0].BuildSql(context);
 				return;
 			}
 			bool afterFirst = false;
-			builder.Append("(");
+			context.Builder.Append("(");
 			foreach (var part in activeParts)
 			{
 				if (afterFirst)
 				{
-					builder.Append(" ");
-					builder.Append(_operatorName);
-					builder.Append(" ");
+					context.Builder.Append(" ");
+					context.Builder.Append(_operatorName);
+					context.Builder.Append(" ");
 				}
-				part.BuildSql(builder, tool, parameters);
+				part.BuildSql(context);
 				afterFirst = true;
 			}
-			builder.Append(")");
+			context.Builder.Append(")");
 		}
 
 		/// <summary>
@@ -786,10 +803,10 @@ namespace DataAccessFramework
 		/// <summary>
 		/// Implements generating the sql for the clause
 		/// </summary>
-		public override void BuildSql(StringBuilder builder, DataTool tool, IList<IDataParameter> parameters)
+		internal override void BuildSql(BuildSqlContext context)
 		{
-			_field.BuildSql(builder, tool, parameters);
-			builder.Append(" IS NULL");
+			_field.BuildSql(context);
+			context.Builder.Append(" IS NULL");
 		}
 	}
 }
