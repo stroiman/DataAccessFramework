@@ -1,3 +1,5 @@
+using System;
+
 namespace DataAccessFramework.Querying
 {
 	public class Join : TableBase
@@ -42,6 +44,14 @@ namespace DataAccessFramework.Querying
 				return;
 			sqlContext.Builder.Append(" on ");
 			_wherePart.BuildSql(sqlContext);
+		}
+
+		public DataQuery SelectWhere(WherePart condition)
+		{
+			var result = new DataQuery();
+			result.AddTable(this);
+			result.AddWhere(condition);
+			return result;
 		}
 	}
 }

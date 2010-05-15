@@ -110,5 +110,23 @@ namespace DataAccessFramework.UnitTest
 			// Validate
 			Assert.That(ExecutedSql, Is.EqualTo(expected));
 		}
+
+		[Test]
+		public void SelectFromTable()
+		{
+			var query =
+				_userTable
+				.LeftJoin(_blogTable)
+				.On(_userTable.ID.EqualTo(_blogTable.UserID))
+				.SelectWhere(_userTable.ID.EqualTo(1));
+
+			const string expected = "select * from [User] t1 left outer join [Blog] t2 on t1.[ID]=t2.[UserID] where t1.[ID]=@p1";
+
+			// Exercise
+			Execute(query);
+
+			// Validate
+			Assert.That(ExecutedSql, Is.EqualTo(expected));
+		}
 	}
 }
