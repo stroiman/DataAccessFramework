@@ -16,7 +16,7 @@ namespace DataAccessFramework.Querying
 		private readonly List<SortExpression> _sortExpressions =
 			new List<SortExpression>();
 		private int _tableNo = 1;
-		private Dictionary<QueryTable, string> _aliasMap = new Dictionary<QueryTable, string>();
+		private readonly Dictionary<QueryTable, string> _aliasMap = new Dictionary<QueryTable, string>();
 
 		/// <summary>
 		/// Adds a table to the query.
