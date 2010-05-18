@@ -21,19 +21,10 @@ namespace DataAccessFramework.Querying
 		/// <summary>
 		/// Adds a table to the query.
 		/// </summary>
-		public void AddTable(QueryTable table)
+		public void AddTable(TableBase table)
 		{
 			_tables.Add(table);
 			SetAlias(table);
-		}
-
-		/// <summary>
-		/// Adds a table to the query.
-		/// </summary>
-		public void AddTable(Join join)
-		{
-			_tables.Add(join);
-			SetAlias(join);
 		}
 
 		private string GetAlias(QueryTable table)

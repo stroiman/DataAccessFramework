@@ -91,6 +91,26 @@ namespace DataAccessFramework.UnitTest
 		}
 
 		[Test]
+		public void InnerJoin()
+		{
+			// Setup
+			var query = new DataQuery();
+			query.AddTable(
+				_userTable
+				.InnerJoin(_blogTable)
+				.On(
+					_userTable.ID.EqualTo(_blogTable.UserID)
+				));
+			const string expected = "select * from [User] t1 inner join [Blog] t2 on t1.[ID]=t2.[UserID]";
+
+			// Exercise
+			Execute(query);
+
+			// Validate
+			Assert.That(ExecutedSql, Is.EqualTo(expected));
+		}
+
+		[Test]
 		public void DoubleLeftJoin()
 		{
 			var query = new DataQuery();

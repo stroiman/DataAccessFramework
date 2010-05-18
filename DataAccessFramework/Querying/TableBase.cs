@@ -7,7 +7,20 @@ namespace DataAccessFramework.Querying
 
 		public Join LeftJoin(QueryTable table)
 		{
-			return new Join(this, table);
+			return new Join(this, table, JoinType.Left);
+		}
+
+		public Join InnerJoin(QueryTable table)
+		{
+			return new Join(this, table, JoinType.Inner);
+		}
+
+		public DataQuery SelectWhere(WherePart condition)
+		{
+			var result = new DataQuery();
+			result.AddTable(this);
+			result.AddWhere(condition);
+			return result;
 		}
 	}
 }
