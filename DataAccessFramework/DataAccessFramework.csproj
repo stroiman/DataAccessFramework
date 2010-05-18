@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataRecordExtension.cs" />
     <Compile Include="Querying\AndClause.cs" />
     <Compile Include="Querying\BoolConstant.cs" />
     <Compile Include="Querying\BuildSqlContext.cs" />
