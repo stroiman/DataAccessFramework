@@ -45,7 +45,7 @@ namespace DataAccessFramework.UnitTest
 
 		public Query Insert(T entity)
 		{
-			return new InsertQuery(base.Name, GetFields(entity));
+			return new InsertQuery(base.TableName, GetFields(entity));
 		}
 
 		private IEnumerable<Tuple<string, object>> GetFields(T entity)

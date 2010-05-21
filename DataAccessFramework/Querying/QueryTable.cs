@@ -19,7 +19,7 @@ namespace DataAccessFramework.Querying
 		/// <summary>
 		/// Gets the table name
 		/// </summary>
-		public override string Name { get { return _tableName; } }
+		public override string TableName { get { return _tableName; } }
 
 		internal override void BuildSql(BuildSqlContext sqlContext)
 		{

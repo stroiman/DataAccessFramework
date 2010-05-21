@@ -116,7 +116,7 @@ namespace DataAccessFramework.Querying
 		/// <returns></returns>
 		public TableBase FindTable(string tableName)
 		{
-			return _tables.Find(x => x.Name == tableName);
+			return _tables.Find(x => x.TableName == tableName);
 		}
 
 		/// <summary>

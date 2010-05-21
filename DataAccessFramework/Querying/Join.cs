@@ -41,7 +41,7 @@ namespace DataAccessFramework.Querying
 			return this;
 		}
 
-		public override string Name
+		public override string TableName
 		{
 			get { return "JOIN"; }
 		}
