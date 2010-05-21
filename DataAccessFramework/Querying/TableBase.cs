@@ -17,7 +17,7 @@ namespace DataAccessFramework.Querying
 
 		public DataQuery SelectWhere(WherePart condition)
 		{
-			var result = new DataQuery();
+			var result = new SelectQuery();
 			result.AddTable(this);
 			result.AddWhere(condition);
 			return result;

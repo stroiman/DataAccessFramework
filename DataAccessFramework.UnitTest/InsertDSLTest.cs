@@ -36,7 +36,7 @@ namespace DataAccessFramework.UnitTest
 
 		public DataQuery Insert(T entity)
 		{
-			return new DataQuery();
+			return new InsertQuery();
 		}
 	}
 

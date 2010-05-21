@@ -50,6 +50,7 @@
     <Compile Include="Querying\EqualsClause.cs" />
     <Compile Include="Querying\FieldReference.cs" />
     <Compile Include="Querying\FullTextClause.cs" />
+    <Compile Include="Querying\InsertQuery.cs" />
     <Compile Include="Querying\IntConstant.cs" />
     <Compile Include="Querying\IsNullClause.cs" />
     <Compile Include="Querying\Join.cs" />
@@ -60,6 +61,7 @@
     <Compile Include="Querying\OrClause.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Querying\QueryTable.cs" />
+    <Compile Include="Querying\SelectQuery.cs" />
     <Compile Include="Querying\SortExpression.cs" />
     <Compile Include="SqlExpressDataTool.cs" />
     <Compile Include="SqlServerDataTool.cs" />

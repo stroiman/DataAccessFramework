@@ -10,8 +10,8 @@ namespace DataAccessFramework.UnitTest
 		public void Create_Query_With_One_Table()
 		{
 			// Setup
-			DataQuery dataQuery = new DataQuery();
-			QueryTable table = new QueryTable("table");
+			var dataQuery = CreateSelectQuery();
+			var table = new QueryTable("table");
 			dataQuery.AddTable(table);
 
 			// Execute
@@ -25,8 +25,8 @@ namespace DataAccessFramework.UnitTest
 		public void Create_Query_With_One_Table_And_Int_Parameter()
 		{
 			// Setup
-			DataQuery dataQuery = new DataQuery();
-			QueryTable table = new QueryTable("table");
+			var dataQuery = CreateSelectQuery();
+			var table = new QueryTable("table");
 			var clause = new EqualsClause(new FieldReference(table, "field"), new IntConstant(5));
 			dataQuery.AddWhere(clause);
 			dataQuery.AddTable(table);
@@ -44,8 +44,8 @@ namespace DataAccessFramework.UnitTest
 		public void Create_Query_With_One_Table_And_Two_Parameters()
 		{
 			// Setup
-			DataQuery dataQuery = new DataQuery();
-			QueryTable table = new QueryTable("table");
+			var dataQuery = CreateSelectQuery();
+			var table = new QueryTable("table");
 			var clause = new AndClause(new[]
 			{
 				new EqualsClause(new FieldReference(table, "field"), new IntConstant(5)),
@@ -68,9 +68,9 @@ namespace DataAccessFramework.UnitTest
 		public void Create_Query_With_Two_Tables()
 		{
 			// Setup
-			DataQuery dataQuery = new DataQuery();
-			QueryTable t1 = new QueryTable("table1");
-			QueryTable t2 = new QueryTable("table2");
+			var dataQuery = CreateSelectQuery();
+			var t1 = new QueryTable("table1");
+			var t2 = new QueryTable("table2");
 			dataQuery.AddTable(t1);
 			dataQuery.AddTable(t2);
 
@@ -85,8 +85,8 @@ namespace DataAccessFramework.UnitTest
 		public void Create_FullText_Query()
 		{
 			// Setup
-			DataQuery dataQuery = new DataQuery();
-			QueryTable t1 = new QueryTable("table1");
+			var dataQuery = CreateSelectQuery();
+			var t1 = new QueryTable("table1");
 			var clause = new FullTextClause("Peter", new FieldReference(t1, "field"));
 			dataQuery.AddTable(t1);
 			dataQuery.AddWhere(clause);
@@ -104,8 +104,8 @@ namespace DataAccessFramework.UnitTest
 		public void Fulltext_Clause_With_Only_Wildcard_Character_Is_Ignored()
 		{
 			// Setup
-			DataQuery dataQuery = new DataQuery();
-			QueryTable t1 = new QueryTable("table1");
+			var dataQuery = CreateSelectQuery();
+			var t1 = new QueryTable("table1");
 			var clause = new FullTextClause("*", new FieldReference(t1, "field"));
 			dataQuery.AddTable(t1);
 			dataQuery.AddWhere(clause);

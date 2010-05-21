@@ -7,7 +7,7 @@ namespace DataAccessFramework.Querying
 {
 	/// <summary>
 	/// Context for generating SQL. This contains all the data that is build up
-	/// when generating SQL for a <see cref="DataQuery"/>
+	/// when generating SQL for a <see cref="Query"/>
 	/// </summary>
 	internal class BuildSqlContext
 	{

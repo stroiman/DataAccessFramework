@@ -58,7 +58,7 @@ namespace DataAccessFramework.UnitTest
 		public void SelectByID()
 		{
 			// Setup
-			var query = new DataQuery();
+			var query = CreateSelectQuery();
 			query.AddTable(_userTable);
 			query.AddWhere(_userTable.ID.EqualTo(1));
 			const string expected = "select * from [User] t1 where t1.[ID]=@p1";
@@ -74,7 +74,7 @@ namespace DataAccessFramework.UnitTest
 		public void LeftJoin()
 		{
 			// Setup
-			var query = new DataQuery();
+			var query = CreateSelectQuery();
 			query.AddTable(
 				_userTable
 				.LeftJoin(_blogTable)
@@ -94,7 +94,7 @@ namespace DataAccessFramework.UnitTest
 		public void InnerJoin()
 		{
 			// Setup
-			var query = new DataQuery();
+			var query = CreateSelectQuery();
 			query.AddTable(
 				_userTable
 				.InnerJoin(_blogTable)
@@ -113,7 +113,7 @@ namespace DataAccessFramework.UnitTest
 		[Test]
 		public void DoubleLeftJoin()
 		{
-			var query = new DataQuery();
+			var query = CreateSelectQuery();
 			query.AddTable(
 				_userTable
 				.LeftJoin(_blogTable)

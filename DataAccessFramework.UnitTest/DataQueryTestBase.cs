@@ -31,9 +31,14 @@ namespace DataAccessFramework.UnitTest
 				         	});
 		}
 
-		protected void Execute(DataQuery query)
+		protected void Execute(Query query)
 		{
 			_dataToolMock.Object.ExecuteQuery(query);
+		}
+
+		protected static SelectQuery CreateSelectQuery()
+		{
+			return new SelectQuery();
 		}
 	}
 }

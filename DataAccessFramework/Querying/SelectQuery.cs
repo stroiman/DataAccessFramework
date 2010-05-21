@@ -1,15 +1,15 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Text;
 using System.Data;
+using System.Text;
 
 namespace DataAccessFramework.Querying
 {
 	///<summary>
-	/// An object that represents an SQL query, containing references
+	/// An object that represents an SQL select, containing references
 	/// to the tables to join, and the where clauses.
 	///</summary>
-	public class DataQuery
+	public class SelectQuery : DataQuery
 	{
 		private readonly List<TableBase> _tables = new List<TableBase>();
 		private readonly AndClause _whereClause = new AndClause();
@@ -61,22 +61,7 @@ namespace DataAccessFramework.Querying
 			get { return _tables.AsReadOnly(); }
 		}
 
-		internal class ParseResult
-		{
-			private readonly string _sql;
-			private readonly IList<IDataParameter> _parameters;
-
-			public ParseResult(string sql, IList<IDataParameter> parameters)
-			{
-				_sql = sql;
-				_parameters = parameters;
-			}
-
-			public string Sql { get { return _sql; } }
-			public IList<IDataParameter> Parameters { get { return _parameters; } }
-		}
-
-		internal ParseResult Parse(DataTool dataTool)
+		internal override ParseResult Parse(DataTool dataTool)
 		{
 			IList<IDataParameter> parameters = new List<IDataParameter>();
 			var builder = new StringBuilder();
