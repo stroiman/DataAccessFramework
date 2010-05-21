@@ -9,7 +9,7 @@ namespace DataAccessFramework.Querying
 	/// An object that represents an SQL select, containing references
 	/// to the tables to join, and the where clauses.
 	///</summary>
-	public class SelectQuery : DataQuery
+	public class SelectQuery : Query
 	{
 		private readonly List<TableBase> _tables = new List<TableBase>();
 		private readonly AndClause _whereClause = new AndClause();

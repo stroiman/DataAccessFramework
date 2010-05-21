@@ -15,7 +15,7 @@ namespace DataAccessFramework.Querying
 			return new Join(this, table, JoinType.Inner);
 		}
 
-		public DataQuery SelectWhere(WherePart condition)
+		public Query SelectWhere(WherePart condition)
 		{
 			var result = new SelectQuery();
 			result.AddTable(this);

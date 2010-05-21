@@ -44,7 +44,7 @@
     <Compile Include="Querying\AndClause.cs" />
     <Compile Include="Querying\BoolConstant.cs" />
     <Compile Include="Querying\BuildSqlContext.cs" />
-    <Compile Include="Querying\DataQuery.cs" />
+    <Compile Include="Querying\Query.cs" />
     <Compile Include="DataTool.cs" />
     <Compile Include="DataToolException.cs" />
     <Compile Include="Querying\EqualsClause.cs" />

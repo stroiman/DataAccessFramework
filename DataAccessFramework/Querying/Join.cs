@@ -68,7 +68,7 @@ namespace DataAccessFramework.Querying
 			_wherePart.BuildSql(sqlContext);
 		}
 
-		public DataQuery SelectWhere(WherePart condition)
+		public Query SelectWhere(WherePart condition)
 		{
 			var result = new SelectQuery();
 			result.AddTable(this);

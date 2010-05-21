@@ -219,5 +219,14 @@ namespace DataAccessFramework
 				parameter.Value = DBNull.Value;
 			return parameter;
 		}
+
+		/// <summary>
+		/// Creates a parameter for an object. The type of parameter will be
+		/// deducted from the <param name="value"/> parameter.
+		/// </summary>
+		public override IDataParameter CreateParameter(string parameterName, object value)
+		{
+			return new SqlParameter(parameterName, value);
+		}
 	}
 }

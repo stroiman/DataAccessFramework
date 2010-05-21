@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using DataAccessFramework.Querying;
 using NUnit.Framework;
@@ -20,23 +21,40 @@ namespace DataAccessFramework.UnitTest
 		{
 			_getValue = getValue;
 		}
+
+		public Func<T, object> GetValue
+		{
+			get { return _getValue; }
+		}
 	}
 
 	public class EntityTable<T> : QueryTable
 	{
-		public EntityTable(string tableName,
-			params FieldMapping<T>[] mappings)
+		private List<FieldMapping<T>> _fields = new List<FieldMapping<T>>();
+
+		public EntityTable(string tableName)
 			: base(tableName)
 		{ }
 
 		protected FieldMapping<T> MapField(string fieldName, Func<T, object> getValue)
 		{
-			return new FieldMapping<T>(this, fieldName, getValue);
+			var result = new FieldMapping<T>(this, fieldName, getValue);
+			_fields.Add(result);
+			return result;
 		}
 
-		public DataQuery Insert(T entity)
+		public Query Insert(T entity)
 		{
-			return new InsertQuery();
+			return new InsertQuery(base.Name, GetFields(entity));
+		}
+
+		private IEnumerable<Tuple<string, object>> GetFields(T entity)
+		{
+			return _fields.Select(x =>
+				new Tuple<string, object>(
+					x.FieldName,
+					x.GetValue(entity))
+					);
 		}
 	}
 
@@ -45,7 +63,7 @@ namespace DataAccessFramework.UnitTest
 		public readonly new FieldMapping<MyEntity> Name;
 
 		public MyEntityTable()
-			: base("Table")
+			: base("Entity")
 		{
 			Name = MapField("Name", x => x.Name);
 		}
@@ -60,7 +78,7 @@ namespace DataAccessFramework.UnitTest
 			// Setup
 			const string expectedName = "name";
 			var entity = new MyEntity { Name = expectedName };
-			const string expectedSql = @"insert into [Entity] (Name) values(@p1)";
+			const string expectedSql = @"insert into [Entity] (Name) values (@p1)";
 
 			// Exercise
 			var query = new MyEntityTable().Insert(entity);
