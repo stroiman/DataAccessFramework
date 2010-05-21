@@ -561,6 +561,8 @@ namespace DataAccessFramework
 		/// <returns></returns>
 		public IDataReader ExecuteQuery(DataQuery query)
 		{
+			if (query == null)
+				throw new ArgumentNullException("query");
 			var result = query.Parse(this);
 			return ExecuteSqlReader(result.Sql, result.Parameters.ToArray());
 		}
