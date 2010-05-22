@@ -566,11 +566,5 @@ namespace DataAccessFramework
 			var result = query.Parse(this);
 			return ExecuteSqlReader(result.Sql, result.Parameters.ToArray());
 		}
-
-		/// <summary>
-		/// Creates a parameter for an object. The type of parameter will be
-		/// deducted from the value of the parameter.
-		/// </summary>
-		public abstract IDataParameter CreateParameter(string parameterName, object value);
 	}
 }

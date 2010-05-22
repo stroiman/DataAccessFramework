@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Data;
+using System.Linq;
 using System.Text;
 
 namespace DataAccessFramework.Querying
@@ -12,12 +13,12 @@ namespace DataAccessFramework.Querying
 	public class InsertQuery : Query
 	{
 		private readonly string _tableName;
-		List<Tuple<string, object>> _fields;
+		private readonly List<Tuple<string, Func<DataTool, string, IDataParameter>>> _fields;
 
-		public InsertQuery(string tableName, IEnumerable<Tuple<string, object>> fields)
+		public InsertQuery(string tableName, IEnumerable<Tuple<string, Func<DataTool, string, IDataParameter>>> fields)
 		{
 			_tableName = tableName;
-			_fields = new List<Tuple<string, object>>(fields);
+			_fields = fields.ToList();
 		}
 
 		internal override ParseResult Parse(DataTool dataTool)
@@ -45,7 +46,7 @@ namespace DataAccessFramework.Querying
 				var parameterName = "p" + parameterNo;
 				builder.Append("@");
 				builder.Append(parameterName);
-				parameters.Add(dataTool.CreateParameter(parameterName, tuple.Item2));
+				parameters.Add(tuple.Item2(dataTool, parameterName));
 			}
 			builder.Append(")");
 			return new ParseResult(builder.ToString(), parameters);

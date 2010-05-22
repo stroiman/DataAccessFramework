@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 
 namespace DataAccessFramework.Querying
@@ -12,7 +13,14 @@ namespace DataAccessFramework.Querying
 			: base(tableName)
 		{ }
 
-		protected FieldMapping<T> MapField(string fieldName, Func<T, object> getValue)
+		protected FieldMapping<T> MapField(string fieldName, Func<T, int> getValue)
+		{
+			var result = new FieldMapping<T>(this, fieldName, getValue);
+			_fields.Add(result);
+			return result;
+		}
+
+		protected FieldMapping<T> MapField(string fieldName, Func<T, string> getValue)
 		{
 			var result = new FieldMapping<T>(this, fieldName, getValue);
 			_fields.Add(result);
@@ -24,12 +32,12 @@ namespace DataAccessFramework.Querying
 			return new InsertQuery(base.TableName, GetFields(entity));
 		}
 
-		private IEnumerable<Tuple<string, object>> GetFields(T entity)
+		private IEnumerable<Tuple<string, Func<DataTool, string, IDataParameter>>> GetFields(T entity)
 		{
 			return _fields.Select(x =>
-				new Tuple<string, object>(
+				new Tuple<string, Func<DataTool, string, IDataParameter>>(
 					x.FieldName,
-					x.GetValue(entity))
+					x.CreateParameter(entity))
 				);
 		}
 	}

@@ -28,9 +28,9 @@ namespace DataAccessFramework.UnitTest
 				.Returns(
 					(string name, int? value) => CreateParameterMock(name, value));
 			_dataToolMock.Setup(
-				x => x.CreateParameter(It.IsAny<string>(), It.IsAny<object>()))
+				x => x.CreateStringParameter(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int?>()))
 				.Returns(
-					(string name, object value) => CreateParameterMock(name, value));
+					(string name, object value, int? length) => CreateParameterMock(name, value));
 		}
 
 		private static IDataParameter CreateParameterMock(string name, object value)
