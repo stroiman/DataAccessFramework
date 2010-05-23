@@ -11,7 +11,7 @@ namespace DataAccessFramework.UnitTest
 
 	public class MyEntityTable : EntityTable<MyEntity>
 	{
-		public readonly new FieldMapping<MyEntity> Name;
+		public readonly FieldMapping<MyEntity> Name;
 
 		public MyEntityTable()
 			: base("Entity")

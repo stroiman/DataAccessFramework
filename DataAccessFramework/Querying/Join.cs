@@ -67,13 +67,5 @@ namespace DataAccessFramework.Querying
 			builder.Append(" on ");
 			_wherePart.BuildSql(sqlContext);
 		}
-
-		public Query SelectWhere(WherePart condition)
-		{
-			var result = new SelectQuery();
-			result.AddTable(this);
-			result.AddWhere(condition);
-			return result;
-		}
 	}
 }

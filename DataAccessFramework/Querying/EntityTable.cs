@@ -13,18 +13,30 @@ namespace DataAccessFramework.Querying
 			: base(tableName)
 		{ }
 
-		protected FieldMapping<T> MapField(string fieldName, Func<T, int> getValue)
+		protected FieldMapping<T> AddField(FieldMapping<T> field)
 		{
-			var result = new FieldMapping<T>(this, fieldName, getValue);
-			_fields.Add(result);
-			return result;
+			_fields.Add(field);
+			return field;
+		}
+
+		protected FieldMapping<T> MapField(string fieldName, Func<T, int?> getValue)
+		{
+			return AddField(new FieldMapping<T>(this, fieldName, getValue));
+		}
+
+		protected FieldMapping<T> MapField(string fieldName, Func<T, DateTime?> getValue)
+		{
+			return AddField(new FieldMapping<T>(this, fieldName, getValue));
+		}
+
+		protected FieldMapping<T> MapField(string fieldName, Func<T, long?> getValue)
+		{
+			return AddField(new FieldMapping<T>(this, fieldName, getValue));
 		}
 
 		protected FieldMapping<T> MapField(string fieldName, Func<T, string> getValue)
 		{
-			var result = new FieldMapping<T>(this, fieldName, getValue);
-			_fields.Add(result);
-			return result;
+			return AddField(new FieldMapping<T>(this, fieldName, getValue));
 		}
 
 		public Query Insert(T entity)
