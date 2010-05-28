@@ -13,7 +13,21 @@ namespace DataAccessFramework.Querying
 			: base(tableName)
 		{ }
 
-		protected FieldMapping<T> MapField(string fieldName, Func<T, int> getValue)
+		protected FieldMapping<T> MapField(string fieldName, Func<T, int?> getValue)
+		{
+			var result = new FieldMapping<T>(this, fieldName, getValue);
+			_fields.Add(result);
+			return result;
+		}
+
+		protected FieldMapping<T> MapField(string fieldName, Func<T, DateTime?> getValue)
+		{
+			var result = new FieldMapping<T>(this, fieldName, getValue);
+			_fields.Add(result);
+			return result;
+		}
+
+		protected FieldMapping<T> MapField(string fieldName, Func<T, long?> getValue)
 		{
 			var result = new FieldMapping<T>(this, fieldName, getValue);
 			_fields.Add(result);
