@@ -34,7 +34,9 @@ namespace DataAccessFramework.Querying
 				if (appendComma)
 					builder.Append(", ");
 				appendComma = true;
+				builder.Append("[");
 				builder.Append(tuple.Item1);
+				builder.Append("]");
 			}
 			builder.Append(") values (");
 			int parameterNo = 0;

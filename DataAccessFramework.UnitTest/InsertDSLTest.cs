@@ -29,7 +29,7 @@ namespace DataAccessFramework.UnitTest
 			// Setup
 			const string expectedName = "name";
 			var entity = new MyEntity { Name = expectedName };
-			const string expectedSql = @"insert into [Entity] (Name) values (@p1)";
+			const string expectedSql = @"insert into [Entity] ([Name]) values (@p1)";
 
 			// Exercise
 			var query = new MyEntityTable().Insert(entity);
