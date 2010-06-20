@@ -1,3 +1,4 @@
+using System;
 using System.Data;
 using DataAccessFramework.Querying;
 using Moq;
@@ -31,6 +32,10 @@ namespace DataAccessFramework.UnitTest
 				x => x.CreateStringParameter(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int?>()))
 				.Returns(
 					(string name, object value, int? length) => CreateParameterMock(name, value));
+			_dataToolMock.Setup(
+				x => x.CreateDateTimeParameter(It.IsAny<string>(), It.IsAny<DateTime?>()))
+				.Returns(
+					(string name, object value) => CreateParameterMock(name, value));
 		}
 
 		private static IDataParameter CreateParameterMock(string name, object value)

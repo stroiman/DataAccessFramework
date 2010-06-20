@@ -16,7 +16,7 @@ namespace DataAccessFramework
 
 		public static string GetString(this IDataRecord record, string fieldName)
 		{
-			return (string) GetObject(record, fieldName);
+			return (string)GetObject(record, fieldName);
 		}
 
 		public static long GetLong(this IDataRecord record, string fieldName)
@@ -27,7 +27,18 @@ namespace DataAccessFramework
 					string.Format(
 						"Cannot get long parameter for field, {0}. Field returned NULL which was not allowed",
 						fieldName));
-			return (long) result;
+			return (long)result;
+		}
+
+		public static T Get<T>(this IDataRecord record, string fieldName)
+		{
+			var result = record[fieldName];
+			if (result == DBNull.Value)
+				throw new InvalidOperationException(
+					string.Format(
+						"Cannot get parameter for field, {0}. Field returned NULL which was not allowed",
+						fieldName));
+			return (T)result;
 		}
 	}
 }
