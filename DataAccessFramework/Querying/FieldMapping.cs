@@ -13,6 +13,7 @@ namespace DataAccessFramework.Querying
 		{
 			_createParameter = (tool, name, entity) => tool.CreateIntParameter(name, getValue(entity));
 		}
+
 		public FieldMapping(
 			QueryTable table, string fieldName, Func<T, DateTime?> getValue)
 			: base(table, fieldName)
