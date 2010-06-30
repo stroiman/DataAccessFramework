@@ -44,10 +44,10 @@ namespace DataAccessFramework.Querying
 			return new InsertQuery(base.TableName, GetFields(entity));
 		}
 
-		private IEnumerable<Tuple<string, Func<DataTool, string, IDataParameter>>> GetFields(T entity)
+		private IEnumerable<InsertQueryParameter> GetFields(T entity)
 		{
 			return _fields.Select(x =>
-				new Tuple<string, Func<DataTool, string, IDataParameter>>(
+				new InsertQueryParameter(
 					x.FieldName,
 					x.CreateParameter(entity))
 				);

@@ -8,14 +8,57 @@ using System.Text;
 namespace DataAccessFramework.Querying
 {
 	/// <summary>
+	/// Serves as input to the <see cref="InsertQuery"/>. Each instance
+	/// of this class tells the name of a field in a table, as well as
+	/// a function that can generate an <see cref="IDataParameter"/>
+	/// containing a value to insert into the field.
+	/// </summary>
+	public class InsertQueryParameter
+	{
+		private readonly string _fieldName;
+		private readonly Func<DataTool, string, IDataParameter> _createParameterFunction;
+		public InsertQueryParameter(string fieldName, Func<DataTool, string, IDataParameter> createParameterFunction)
+		{
+			_fieldName = fieldName;
+			_createParameterFunction = createParameterFunction;
+		}
+
+		/// <summary>
+		/// Creates an <see cref="IDataParameter"/> containing the value to insert
+		/// into a field
+		/// </summary>
+		/// <param name="dataTool">
+		/// A <see cref="DataTool"/> instance used to create the value
+		/// </param>
+		/// <param name="parameterName">
+		/// The name of the parameter to create
+		/// </param>
+		/// <returns>
+		/// The actual parameter
+		/// </returns>
+		public IDataParameter CreateParameter(DataTool dataTool, string parameterName)
+		{
+			return _createParameterFunction(dataTool, parameterName);
+		}
+
+		/// <summary>
+		/// Gets the name of the field in the database that should be updated
+		/// </summary>
+		public string FieldName
+		{
+			get { return _fieldName; }
+		}
+	}
+
+	/// <summary>
 	/// A specialized <see cref="Query"/> that represents an insert sql query.
 	/// </summary>
 	public class InsertQuery : Query
 	{
 		private readonly string _tableName;
-		private readonly List<Tuple<string, Func<DataTool, string, IDataParameter>>> _fields;
+		private readonly List<InsertQueryParameter> _fields;
 
-		public InsertQuery(string tableName, IEnumerable<Tuple<string, Func<DataTool, string, IDataParameter>>> fields)
+		public InsertQuery(string tableName, IEnumerable<InsertQueryParameter> fields)
 		{
 			_tableName = tableName;
 			_fields = fields.ToList();
@@ -35,7 +78,7 @@ namespace DataAccessFramework.Querying
 					builder.Append(", ");
 				appendComma = true;
 				builder.Append("[");
-				builder.Append(tuple.Item1);
+				builder.Append(tuple.FieldName);
 				builder.Append("]");
 			}
 			builder.Append(") values (");
@@ -48,7 +91,7 @@ namespace DataAccessFramework.Querying
 				var parameterName = "p" + parameterNo;
 				builder.Append("@");
 				builder.Append(parameterName);
-				parameters.Add(tuple.Item2(dataTool, parameterName));
+				parameters.Add(tuple.CreateParameter(dataTool, parameterName));
 			}
 			builder.Append(")");
 			return new ParseResult(builder.ToString(), parameters);
