@@ -24,18 +24,20 @@ namespace DataAccessFramework.UnitTest
 							ExecutedSql = sql;
 							ExecutedParameters = parameters;
 						});
+			var createParameterMock = (Func<string, object, IDataParameter>)CreateParameterMock;
 			_dataToolMock.Setup(
 				x => x.CreateIntParameter(It.IsAny<string>(), It.IsAny<int?>()))
-				.Returns(
-					(string name, int? value) => CreateParameterMock(name, value));
+				.Returns(createParameterMock);
 			_dataToolMock.Setup(
 				x => x.CreateStringParameter(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int?>()))
 				.Returns(
 					(string name, object value, int? length) => CreateParameterMock(name, value));
 			_dataToolMock.Setup(
 				x => x.CreateDateTimeParameter(It.IsAny<string>(), It.IsAny<DateTime?>()))
-				.Returns(
-					(string name, object value) => CreateParameterMock(name, value));
+				.Returns(createParameterMock);
+			_dataToolMock.Setup(
+				x => x.CreateDecimalParameter(It.IsAny<string>(), It.IsAny<decimal?>()))
+				.Returns(createParameterMock);
 		}
 
 		private static IDataParameter CreateParameterMock(string name, object value)

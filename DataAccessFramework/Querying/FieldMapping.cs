@@ -36,6 +36,13 @@ namespace DataAccessFramework.Querying
 			_createParameter = (tool, name, entity) => tool.CreateStringParameter(name, getValue(entity), null);
 		}
 
+		public FieldMapping(
+			QueryTable table, string fieldName, Func<T, decimal?> getValue)
+			: base(table, fieldName)
+		{
+			_createParameter = (tool, name, entity) => tool.CreateDecimalParameter(name, getValue(entity));
+		}
+
 		public Func<DataTool, string, IDataParameter> CreateParameter(T entity)
 		{
 			return (DataTool tool, string fieldName) =>

@@ -131,11 +131,38 @@ namespace DataAccessFramework
 		}
 
 		/// <summary>
-		/// Creats a parameter representing a moneray amount. I.e. decimal type.
+		/// Creates database parameter for a decimal value.
 		/// </summary>
-		/// <param name="parameterName"></param>
-		/// <param name="value"></param>
-		/// <returns></returns>
+		/// <param name="parameterName">
+		/// The name of the parameter.
+		/// </param>
+		/// <param name="value">
+		/// The value of the parameter
+		/// </param>
+		/// <returns>
+		/// An <see cref="IDataParameter"/> instance that can be passed
+		/// to any of the execute functions
+		/// </returns>
+		public override IDataParameter CreateDecimalParameter(string parameterName, decimal? value)
+		{
+			var parameter = new SqlParameter(parameterName, SqlDbType.Decimal) { Value = value };
+			return parameter;
+		}
+
+		/// <summary>
+		/// Creates a database parameter for a decimal value used for carrying
+		/// monetary amount.
+		/// </summary>
+		/// <param name="parameterName">
+		/// The name of the parameter.
+		/// </param>
+		/// <param name="value">
+		/// The value of the parameter
+		/// </param>
+		/// <returns>
+		/// An <see cref="IDataParameter"/> instance that can be passed
+		/// to any of the execute functions
+		/// </returns>
 		public override IDataParameter CreateMoneyParameter(string parameterName, decimal value)
 		{
 			var parameter = new SqlParameter(parameterName, SqlDbType.Money) { Value = value };
@@ -143,7 +170,7 @@ namespace DataAccessFramework
 		}
 
 		/// <summary>
-		/// Implements <see cref="DataTool.CreateBinaryParameter"/>.
+		/// Implements <see cref="DataTool.CreateBinaryParameter(string,byte[],int?)"/>.
 		/// Creates a database parameter for binary data.
 		/// </summary>
 		/// <param name="parameterName">

@@ -314,6 +314,22 @@ namespace DataAccessFramework
 			string parameterName, string value, int? length);
 
 		/// <summary>
+		/// Creates database parameter for a decimal value.
+		/// </summary>
+		/// <param name="parameterName">
+		/// The name of the parameter.
+		/// </param>
+		/// <param name="value">
+		/// The value of the parameter
+		/// </param>
+		/// <returns>
+		/// An <see cref="IDataParameter"/> instance that can be passed
+		/// to any of the execute functions
+		/// </returns>
+		public abstract IDataParameter CreateDecimalParameter(
+			string parameterName, decimal? value);
+
+		/// <summary>
 		/// Creates database parameter for an integer value.
 		/// </summary>
 		/// <param name="parameterName">

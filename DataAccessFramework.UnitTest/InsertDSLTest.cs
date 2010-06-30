@@ -10,6 +10,7 @@ namespace DataAccessFramework.UnitTest
 		public string Name { get; set; }
 		public DateTime Date { get; set; }
 		public int SomeID { get; set; }
+		public decimal SomeDecimal { get; set; }
 	}
 
 	public class MyEntityTable : EntityTable<MyEntity>
@@ -17,6 +18,7 @@ namespace DataAccessFramework.UnitTest
 		public readonly FieldMapping<MyEntity> Name;
 		public readonly FieldMapping<MyEntity> Date;
 		public readonly FieldMapping<MyEntity> SomeID;
+		public readonly FieldMapping<MyEntity> SomeDecimal;
 
 		public MyEntityTable()
 			: base("Entity")
@@ -24,6 +26,7 @@ namespace DataAccessFramework.UnitTest
 			Name = MapField("Name", x => x.Name);
 			Date = MapField("Date", x => x.Date);
 			SomeID = MapField("SomeID", x => x.SomeID);
+			SomeDecimal = MapField("SomeDecimal", x => x.SomeDecimal);
 		}
 	}
 
@@ -37,13 +40,15 @@ namespace DataAccessFramework.UnitTest
 			const string expectedName = "name";
 			var expectedDate = DateTime.Now;
 			const int expectedID = 42;
+			var expectedDecimal = 123.45m;
 			var entity = new MyEntity
 			             	{
 			             		Name = expectedName, 
 								Date = expectedDate, 
-								SomeID = expectedID
+								SomeID = expectedID,
+								SomeDecimal = expectedDecimal
 			             	};
-			const string expectedSql = @"insert into [Entity] ([Name], [Date], [SomeID]) values (@p1, @p2, @p3)";
+			const string expectedSql = @"insert into [Entity] ([Name], [Date], [SomeID], [SomeDecimal]) values (@p1, @p2, @p3, @p4)";
 
 			// Exercise
 			var query = new MyEntityTable().Insert(entity);
@@ -54,6 +59,7 @@ namespace DataAccessFramework.UnitTest
 			var stringParameter = ExecutedParameters[0];
 			var dateParameter = ExecutedParameters[1];
 			var intParameter = ExecutedParameters[2];
+			var decimalParameter = ExecutedParameters[3];
 
 			Assert.That(stringParameter.ParameterName, Is.EqualTo("p1"));
 			Assert.That(stringParameter.Value, Is.EqualTo(expectedName));
@@ -63,6 +69,9 @@ namespace DataAccessFramework.UnitTest
 
 			Assert.That(intParameter.ParameterName, Is.EqualTo("p3"));
 			Assert.That(intParameter.Value, Is.EqualTo(expectedID));
+
+			Assert.That(decimalParameter.ParameterName, Is.EqualTo("p4"));
+			Assert.That(decimalParameter.Value, Is.EqualTo(expectedDecimal));
 		}
 	}
 }
