@@ -40,5 +40,14 @@ namespace DataAccessFramework
 						fieldName));
 			return (T)result;
 		}
+
+		public static T? GetNullable<T>(this IDataRecord record, string fieldName)
+			where T : struct
+		{
+			var result = record[fieldName];
+			if (result == DBNull.Value)
+				return null;
+			return (T)result;
+		}
 	}
 }
