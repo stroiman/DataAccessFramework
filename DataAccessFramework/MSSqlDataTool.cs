@@ -216,7 +216,7 @@ namespace DataAccessFramework
 		/// </returns>
 		public override IDataParameter CreateDateTimeParameter(string parameterName, DateTime? value)
 		{
-			var parameter = new SqlParameter(parameterName, SqlDbType.DateTime2);
+			var parameter = new SqlParameter(parameterName, SqlDbType.DateTime);
 			if (value.HasValue)
 				parameter.Value = value.Value;
 			else
