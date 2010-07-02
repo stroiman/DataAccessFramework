@@ -145,7 +145,11 @@ namespace DataAccessFramework
 		/// </returns>
 		public override IDataParameter CreateDecimalParameter(string parameterName, decimal? value)
 		{
-			var parameter = new SqlParameter(parameterName, SqlDbType.Decimal) { Value = value };
+			var parameter = new SqlParameter(parameterName, SqlDbType.Decimal);
+			if (value.HasValue)
+				parameter.Value = value.Value;
+			else
+				parameter.Value = DBNull.Value; 
 			return parameter;
 		}
 
