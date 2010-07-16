@@ -120,6 +120,23 @@ namespace DataAccessFramework.Querying
 		}
 
 		/// <summary>
+		/// Maps an boolean field to to a lookup function
+		/// </summary>
+		/// <param name="fieldName">
+		/// The name of the field in the database
+		/// </param>
+		/// <param name="getValue">
+		/// A function that can return the value to insert into the field
+		/// </param>
+		/// <returns>
+		/// A <see cref="FieldMapping{T}"/> instance that can be used to generate select statements
+		/// </returns>
+		protected FieldMapping<T> MapField(string fieldName, Func<T, bool> getValue)
+		{
+			return AddField(new FieldMapping<T>(this, fieldName, getValue));
+		}
+
+		/// <summary>
 		/// Generates an insert query that can be used to insert data into the
 		/// database.
 		/// </summary>
