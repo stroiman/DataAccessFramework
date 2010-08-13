@@ -1,3 +1,5 @@
+using System;
+
 namespace DataAccessFramework.Querying
 {
 	/// <summary>
@@ -70,6 +72,11 @@ namespace DataAccessFramework.Querying
 		public EqualsClause EqualTo(FieldReference field)
 		{
 			return new EqualsClause(this, field);
+		}
+
+		public WherePart StartsWith(string name)
+		{
+			return new StartsWithClause(this, name);
 		}
 	}
 }

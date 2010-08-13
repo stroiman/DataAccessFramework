@@ -67,6 +67,7 @@
     <Compile Include="Querying\QueryTable.cs" />
     <Compile Include="Querying\SelectQuery.cs" />
     <Compile Include="Querying\SortExpression.cs" />
+    <Compile Include="Querying\StartsWithClause.cs" />
     <Compile Include="SqlExpressDataTool.cs" />
     <Compile Include="SqlServerDataTool.cs" />
     <Compile Include="Querying\StringConstant.cs" />
