@@ -46,7 +46,6 @@
     <Compile Include="Querying\AndClause.cs" />
     <Compile Include="Querying\BoolConstant.cs" />
     <Compile Include="Querying\BuildSqlContext.cs" />
-    <Compile Include="Querying\EntityTable.cs" />
     <Compile Include="Querying\FieldMapping.cs" />
     <Compile Include="Querying\Query.cs" />
     <Compile Include="DataTool.cs" />
@@ -54,7 +53,6 @@
     <Compile Include="Querying\EqualsClause.cs" />
     <Compile Include="Querying\FieldReference.cs" />
     <Compile Include="Querying\FullTextClause.cs" />
-    <Compile Include="Querying\InsertQuery.cs" />
     <Compile Include="Querying\IntConstant.cs" />
     <Compile Include="Querying\IsNullClause.cs" />
     <Compile Include="Querying\Join.cs" />
