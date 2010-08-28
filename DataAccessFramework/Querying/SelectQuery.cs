@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
@@ -11,6 +12,7 @@ namespace DataAccessFramework.Querying
 	///</summary>
 	public class SelectQuery : Query
 	{
+		private readonly List<FieldReference> _selectFields = new List<FieldReference>();
 		private readonly List<TableBase> _tables = new List<TableBase>();
 		private readonly AndClause _whereClause = new AndClause();
 		private readonly List<SortExpression> _sortExpressions =
@@ -30,6 +32,11 @@ namespace DataAccessFramework.Querying
 		private string GetAlias(QueryTable table)
 		{
 			return _aliasMap[table];
+		}
+
+		public void AddSelectField(FieldReference field)
+		{
+			_selectFields.Add(field);
 		}
 
 		public void SetAlias(TableBase tableBase)
@@ -65,7 +72,9 @@ namespace DataAccessFramework.Querying
 		{
 			IList<IDataParameter> parameters = new List<IDataParameter>();
 			var builder = new StringBuilder();
-			builder.Append("select * from ");
+			builder.Append("select ");
+			WriteSelectedColumns(builder);
+			builder.Append(" from ");
 			var secondTable = false;
 			var buildSqlContext = new BuildSqlContext(builder, dataTool, parameters, GetAlias);
 			foreach (var table in _tables)
@@ -93,6 +102,23 @@ namespace DataAccessFramework.Querying
 				}
 			}
 			return new ParseResult(builder.ToString(), parameters);
+		}
+
+		private void WriteSelectedColumns(StringBuilder builder)
+		{
+			if (_selectFields.Count == 0)
+				builder.Append("*");
+			else
+			{
+				var first = true;
+				foreach(var field in _selectFields)
+				{
+					if (!first)
+						builder.Append(", ");
+					builder.AppendFormat("[{0}].[{1}] as {0}_{1}", field.Table.TableName, field.FieldName);
+					first = false;
+				}
+			}
 		}
 
 		/// <summary>

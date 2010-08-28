@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace DataAccessFramework.Querying
 {
 	/// <summary>
@@ -6,6 +8,7 @@ namespace DataAccessFramework.Querying
 	public class QueryTable : TableBase
 	{
 		private readonly string _tableName;
+		private readonly List<FieldReference> _fields = new List<FieldReference>();
 
 		/// <summary>
 		/// Creates a new <c>QueryTable</c> instance.
@@ -43,7 +46,17 @@ namespace DataAccessFramework.Querying
 		/// <param name="name">The name of the field</param>
 		public FieldReference Field(string name)
 		{
-			return new FieldReference(this, name);
+			var result = new FieldReference(this, name);
+			_fields.Add(result);
+			return result;
+		}
+
+		/// <summary>
+		/// Gets a reference to all the fields in the table
+		/// </summary>
+		protected internal override IEnumerable<FieldReference> Fields
+		{
+			get { return _fields.AsReadOnly(); }
 		}
 	}
 }

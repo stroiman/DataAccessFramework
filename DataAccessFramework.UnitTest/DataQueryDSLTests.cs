@@ -8,11 +8,13 @@ namespace DataAccessFramework.UnitTest
 	{
 		public UserTable()
 			: base("User")
-		{ }
+		{
+			ID = Field("ID");
+			Name = Field("Name");
+		}
 
-		public FieldReference ID { get { return new FieldReference(this, "ID"); } }
-
-		public FieldReference FirstName { get { return new FieldReference(this, "Name"); } }
+		public readonly FieldReference ID;
+		public readonly FieldReference Name;
 	}
 
 	public class BlogTable : QueryTable
@@ -20,11 +22,12 @@ namespace DataAccessFramework.UnitTest
 		public BlogTable()
 			: base("Blog")
 		{
+			ID = Field("ID");
+			UserID = Field("UserID");
 		}
 
-		public FieldReference ID { get { return new FieldReference(this, "ID"); } }
-
-		public FieldReference UserID { get { return new FieldReference(this, "UserID"); } }
+		public readonly FieldReference ID;
+		public readonly FieldReference UserID;
 	}
 
 	public class BlogEntryTable : QueryTable
@@ -58,10 +61,8 @@ namespace DataAccessFramework.UnitTest
 		public void SelectByID()
 		{
 			// Setup
-			var query = CreateSelectQuery();
-			query.AddTable(_userTable);
-			query.AddWhere(_userTable.ID.EqualTo(1));
-			const string expected = "select * from [User] t1 where t1.[ID]=@p1";
+			var query = _userTable.SelectWhere(_userTable.ID.EqualTo(1));
+			const string expected = "select [User].[ID] as User_ID, [User].[Name] as User_Name from [User] t1 where t1.[ID]=@p1";
 
 			// Exercise
 			Execute(query);
@@ -140,7 +141,7 @@ namespace DataAccessFramework.UnitTest
 				.On(_userTable.ID.EqualTo(_blogTable.UserID))
 				.SelectWhere(_userTable.ID.EqualTo(1));
 
-			const string expected = "select * from [User] t1 left outer join [Blog] t2 on t1.[ID]=t2.[UserID] where t1.[ID]=@p1";
+			const string expected = "select [User].[ID] as User_ID, [User].[Name] as User_Name, [Blog].[ID] as Blog_ID, [Blog].[UserID] as Blog_UserID from [User] t1 left outer join [Blog] t2 on t1.[ID]=t2.[UserID] where t1.[ID]=@p1";
 
 			// Exercise
 			Execute(query);

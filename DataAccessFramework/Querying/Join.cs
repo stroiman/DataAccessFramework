@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace DataAccessFramework.Querying
 {
@@ -66,6 +68,14 @@ namespace DataAccessFramework.Querying
 				return;
 			builder.Append(" on ");
 			_wherePart.BuildSql(sqlContext);
+		}
+
+		internal protected override IEnumerable<FieldReference> Fields
+		{
+			get
+			{
+				return _left.Fields.Union(_right.Fields);
+			}
 		}
 	}
 }
