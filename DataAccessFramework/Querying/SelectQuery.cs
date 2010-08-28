@@ -115,7 +115,7 @@ namespace DataAccessFramework.Querying
 				{
 					if (!first)
 						builder.Append(", ");
-					builder.AppendFormat("[{0}].[{1}] as {0}_{1}", field.Table.TableName, field.FieldName);
+					builder.AppendFormat("[{0}].[{1}] as {2}_{1}", GetAlias(field.Table), field.FieldName, field.Table.TableName);
 					first = false;
 				}
 			}

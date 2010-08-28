@@ -62,7 +62,7 @@ namespace DataAccessFramework.UnitTest
 		{
 			// Setup
 			var query = _userTable.SelectWhere(_userTable.ID.EqualTo(1));
-			const string expected = "select [User].[ID] as User_ID, [User].[Name] as User_Name from [User] t1 where t1.[ID]=@p1";
+			const string expected = "select [t1].[ID] as User_ID, [t1].[Name] as User_Name from [User] t1 where t1.[ID]=@p1";
 
 			// Exercise
 			Execute(query);
@@ -141,7 +141,7 @@ namespace DataAccessFramework.UnitTest
 				.On(_userTable.ID.EqualTo(_blogTable.UserID))
 				.SelectWhere(_userTable.ID.EqualTo(1));
 
-			const string expected = "select [User].[ID] as User_ID, [User].[Name] as User_Name, [Blog].[ID] as Blog_ID, [Blog].[UserID] as Blog_UserID from [User] t1 left outer join [Blog] t2 on t1.[ID]=t2.[UserID] where t1.[ID]=@p1";
+			const string expected = "select [t1].[ID] as User_ID, [t1].[Name] as User_Name, [t2].[ID] as Blog_ID, [t2].[UserID] as Blog_UserID from [User] t1 left outer join [Blog] t2 on t1.[ID]=t2.[UserID] where t1.[ID]=@p1";
 
 			// Exercise
 			Execute(query);
