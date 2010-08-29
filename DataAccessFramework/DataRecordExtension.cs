@@ -19,6 +19,18 @@ namespace DataAccessFramework
 			return (string)GetObject(record, fieldName);
 		}
 
+		public static T GetEnum<T>(this IDataRecord record, string fieldName)
+			where T : struct
+		{
+			T result;
+			var strResult = record.GetString(fieldName);
+			if (Enum.TryParse(strResult, out result))
+				return result;
+			throw new InvalidOperationException(
+				string.Format("Cannot get enum parameter of type {0}. String {1} could not be parsed",
+				typeof(T).Name, strResult));
+		}
+
 		public static long GetLong(this IDataRecord record, string fieldName)
 		{
 			var result = record[fieldName];
