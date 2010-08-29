@@ -23,6 +23,8 @@ namespace DataAccessFramework.Querying
 		public Query Select()
 		{
 			var result = new SelectQuery();
+			foreach (var field in Fields)
+				result.AddSelectField(field);
 			result.AddTable(this);
 			return result;
 		}

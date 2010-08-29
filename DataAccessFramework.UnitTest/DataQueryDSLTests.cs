@@ -58,6 +58,20 @@ namespace DataAccessFramework.UnitTest
 		}
 
 		[Test]
+		public void SelectingAnEntireTableShouldReturnExplicitRows()
+		{
+			// Setup
+			var query = _userTable.Select();
+			const string expected = "select [t1].[ID] as User_ID, [t1].[Name] as User_Name from [User] t1";
+
+			// Exercise
+			Execute(query);
+
+			// Validate
+			Assert.That(ExecutedSql, Is.EqualTo(expected));
+		}
+
+		[Test]
 		public void SelectByID()
 		{
 			// Setup
