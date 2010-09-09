@@ -69,6 +69,11 @@ namespace DataAccessFramework.Querying
 			return new EqualsClause(this, new LongConstant(value));
 		}
 
+		public EqualsClause EqualTo(bool value)
+		{
+			return new EqualsClause(this, new BoolConstant(value));
+		}
+
 		public EqualsClause EqualTo(FieldReference field)
 		{
 			return new EqualsClause(this, field);
