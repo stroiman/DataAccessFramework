@@ -51,6 +51,7 @@
     <Compile Include="DataQueryTest.cs" />
     <Compile Include="DataQueryTestBase.cs" />
     <Compile Include="DataToolTests.cs" />
+    <Compile Include="LazyCollectionTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
