@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="DataRecordExtension.cs" />
     <Compile Include="LazyCollection.cs" />
+    <Compile Include="LazyList.cs" />
     <Compile Include="Querying\AndClause.cs" />
     <Compile Include="Querying\BoolConstant.cs" />
     <Compile Include="Querying\BuildSqlContext.cs" />
