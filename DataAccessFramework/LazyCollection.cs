@@ -14,8 +14,10 @@ namespace DataAccessFramework
     /// <typeparam name="T">
     /// The type of elements in the collection
     /// </typeparam>
+    [Serializable]
     public class LazyCollection<T> : ICollection<T>
     {
+        [NonSerialized]
         private IEnumerable<T> _enumerable;
         private List<T> _list;
 

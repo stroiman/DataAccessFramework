@@ -6,8 +6,10 @@ using System.Text;
 
 namespace DataAccessFramework
 {
+    [Serializable]
     public class LazyList<T> : IList<T>
     {
+        [NonSerialized]
         private readonly IEnumerable<T> _enumerable;
         private List<T> _list;
 
