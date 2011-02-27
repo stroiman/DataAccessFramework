@@ -1,47 +1,10 @@
 using System;
-using DataAccessFramework.Querying;
+using DataAccessFramework.UnitTest.Tables;
 using NUnit.Framework;
 
 namespace DataAccessFramework.UnitTest
 {
-	public class UserTable : QueryTable
-	{
-		public UserTable()
-			: base("User")
-		{
-			ID = Field("ID");
-			Name = Field("Name");
-		}
-
-		public readonly FieldReference ID;
-		public readonly FieldReference Name;
-	}
-
-	public class BlogTable : QueryTable
-	{
-		public BlogTable()
-			: base("Blog")
-		{
-			ID = Field("ID");
-			UserID = Field("UserID");
-		}
-
-		public readonly FieldReference ID;
-		public readonly FieldReference UserID;
-	}
-
-	public class BlogEntryTable : QueryTable
-	{
-		public BlogEntryTable()
-			: base("BlogEntry")
-		{ }
-
-		public FieldReference ID { get { return new FieldReference(this, "ID"); } }
-
-		public FieldReference BlogID { get { return new FieldReference(this, "BlogID"); } }
-	}
-
-	// New suite of tests that helps a move towards a fluent interface
+    // New suite of tests that helps a move towards a fluent interface
 	[TestFixture]
 	public class DataQueryDslTests : DataQueryTestBase
 	{

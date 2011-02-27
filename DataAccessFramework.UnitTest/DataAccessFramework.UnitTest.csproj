@@ -47,12 +47,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Tables\BlogEntryTable.cs" />
+    <Compile Include="Tables\BlogTable.cs" />
     <Compile Include="DataQueryDSLTests.cs" />
     <Compile Include="DataQueryTest.cs" />
     <Compile Include="DataQueryTestBase.cs" />
     <Compile Include="DataToolTests.cs" />
     <Compile Include="LazyCollectionTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tables\UserTable.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DataAccessFramework\DataAccessFramework.csproj">
@@ -60,6 +63,7 @@
       <Name>DataAccessFramework</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
