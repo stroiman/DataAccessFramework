@@ -1,5 +1,6 @@
 using System;
 using System.Data;
+using System.Text.RegularExpressions;
 using DataAccessFramework.Querying;
 using Moq;
 using NUnit.Framework;
@@ -56,6 +57,18 @@ namespace DataAccessFramework.UnitTest
         protected static SelectQuery CreateSelectQuery()
         {
             return new SelectQuery();
+        }
+
+        protected string ExecutedWhereClause
+        {
+            get
+            {
+                var match = Regex.Match(ExecutedSql, @"where\s*(.*)", RegexOptions.IgnoreCase);
+                return
+                    match.Success
+                    ? match.Groups[1].Value
+                    : null;
+            }
         }
     }
 }
