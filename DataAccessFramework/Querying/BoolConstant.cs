@@ -21,8 +21,7 @@ namespace DataAccessFramework.Querying
 		/// </summary>
 		internal override void BuildSql(BuildSqlContext context)
 		{
-			int parameterNo = context.Parameters.Count + 1;
-			string parameterName = "p" + parameterNo;
+            var parameterName = context.CreateNextParameterName();
 			context.Parameters.Add(context.DataTool.CreateBoolParameter(parameterName, _value));
 			context.Builder.Append("@");
 			context.Builder.Append(parameterName);

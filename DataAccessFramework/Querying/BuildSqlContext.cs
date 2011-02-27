@@ -59,5 +59,11 @@ namespace DataAccessFramework.Querying
 		{
 			get { return _builder; }
 		}
+
+        public string CreateNextParameterName()
+        {
+            var parameterNo = Parameters.Count + 1;
+            return "p" + parameterNo;
+        }
 	}
 }

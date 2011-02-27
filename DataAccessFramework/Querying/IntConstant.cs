@@ -19,13 +19,12 @@ namespace DataAccessFramework.Querying
 		/// <summary>
 		/// Builds the SQL for the integer constants. Creates a parameter
 		/// </summary>
-		internal override void BuildSql(BuildSqlContext sqlContext)
+		internal override void BuildSql(BuildSqlContext context)
 		{
-			int parameterNo = sqlContext.Parameters.Count + 1;
-			string parameterName = "p" + parameterNo;
-			sqlContext.Parameters.Add(sqlContext.DataTool.CreateIntParameter(parameterName, _value));
-			sqlContext.Builder.Append("@");
-			sqlContext.Builder.Append(parameterName);
+            var parameterName = context.CreateNextParameterName();
+			context.Parameters.Add(context.DataTool.CreateIntParameter(parameterName, _value));
+			context.Builder.Append("@");
+			context.Builder.Append(parameterName);
 		}
 
 		/// <summary>
