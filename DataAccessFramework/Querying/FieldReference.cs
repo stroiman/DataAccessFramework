@@ -83,5 +83,10 @@ namespace DataAccessFramework.Querying
 		{
 			return new StartsWithClause(this, name);
 		}
+
+	    public WherePart LessThan(DateTime value)
+	    {
+            return new LessThanClause(this, new DateTimeConstant(value));
+	    }
 	}
 }

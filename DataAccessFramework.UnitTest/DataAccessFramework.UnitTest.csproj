@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataQueryComparisonTest.cs" />
     <Compile Include="Tables\BlogEntryTable.cs" />
     <Compile Include="Tables\BlogTable.cs" />
     <Compile Include="DataQueryDSLTests.cs" />
