@@ -13,7 +13,7 @@ namespace DataAccessFramework.UnitTest
         protected IDataParameter[] ExecutedParameters;
 
         [SetUp]
-        public void Setup()
+        public void DataQueryTestBaseSetup()
         {
             _dataToolMock = new Mock<DataTool> { CallBase = true };
             _dataToolMock.Setup(
