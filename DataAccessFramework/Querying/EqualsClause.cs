@@ -11,8 +11,6 @@ namespace DataAccessFramework.Querying
 		/// <summary>
 		/// Creates a new <c>EqualsClause</c> instance
 		/// </summary>
-		/// <param name="left"></param>
-		/// <param name="right"></param>
 		public EqualsClause(WherePart left, WherePart right)
 		{
 			_left = left;
